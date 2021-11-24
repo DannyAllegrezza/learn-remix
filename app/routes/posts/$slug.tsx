@@ -10,12 +10,11 @@ export let loader: LoaderFunction = async ({ params }) => {
 };
 
 export default function PostSlug() {
-  const post = useLoaderData<Post>();
+  const post = useLoaderData();
 
   return (
     <div>
-      <h1>{post.title}</h1>
-      <code>{post.body}</code>
+      <div dangerouslySetInnerHTML={{ __html: post.html }} />
     </div>
   );
 }
