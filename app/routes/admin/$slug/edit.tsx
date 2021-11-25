@@ -1,7 +1,8 @@
-import { redirect, Form, useActionData, useTransition } from "remix";
-import { createPost } from "~/post";
-import type { ActionFunction } from "remix";
+import type { ActionFunction, LoaderFunction } from "remix";
+import { Form, redirect, useLoaderData } from "remix";
 import invariant from "tiny-invariant";
+import type { NewPost } from "~/post";
+import { createPost, getPost } from "~/post";
 
 export let action: ActionFunction = async ({ request }) => {
   let formData = await request.formData();
@@ -26,36 +27,41 @@ export let action: ActionFunction = async ({ request }) => {
 
   await createPost({ title, slug, markdown });
 
+  console.log("redirecting to /admin");
   return redirect("/admin");
 };
 
-export default function NewPost() {
-  let errors = useActionData();
-  let transition = useTransition();
+export let loader: LoaderFunction = async ({ params }) => {
+  invariant(params.slug, "expected params.slug");
+
+  return getPost(params.slug);
+};
+
+export default function PostSlug() {
+  const post = useLoaderData<NewPost>();
 
   return (
     <Form method="post">
       <p>
         <label>
-          Post Title: {errors?.title && <em>Title is required</em>}
-          <input type="text" name="title" />
+          Post Title:
+          <input type="text" name="title" defaultValue={post.title} />
         </label>
       </p>
       <p>
         <label>
-          Post Slug: {errors?.slug && <em>Slug is required</em>}
-          <input type="text" name="slug" />
+          Post Slug:
+          <input type="text" name="slug" defaultValue={post.slug} />
         </label>
       </p>
       <p>
-        <label htmlFor="markdown">Markdown:</label>{" "}
-        {errors?.markdown && <em>Markdown is required</em>}
-        <br />
-        <textarea rows={20} name="markdown" />
+        <label htmlFor="markdown">Markdown:</label> <br />
+        <textarea rows={20} name="markdown" defaultValue={post.markdown} />
       </p>
       <p>
         <button type="submit">
-          {transition.submission ? "Creating..." : "Create Post"}
+          Update Post
+          {/* {transition.submission ? "Creating..." : "Create Post"} */}
         </button>
       </p>
     </Form>

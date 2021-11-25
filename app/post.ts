@@ -13,6 +13,12 @@ export type NewPost = Post & {
   markdown: string;
 };
 
+export type NewPostErrors = {
+  title: boolean;
+  slug: boolean;
+  markdown: boolean;
+};
+
 export type PostMarkdownAttributes = {
   title: string;
 };
@@ -42,7 +48,7 @@ export async function getPost(slug: string) {
   );
   let html = marked(body);
 
-  return { slug, html, title: attributes.title };
+  return { slug, markdown: body, html, title: attributes.title };
 }
 
 export async function getPosts() {

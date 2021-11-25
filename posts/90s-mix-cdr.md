@@ -1,5 +1,5 @@
 ---
-title: 90s Mixtape
+title: 90s Mixtape!
 ---
 
 # 90s Mixtape
